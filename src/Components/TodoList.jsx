@@ -12,6 +12,12 @@ const TodoList = () => {
       setHeadingInput("");
     }
   };
+
+  const handleKeyDown = (event) => {
+    if (event.key === "Enter") {
+      handleAddTodo();
+    }
+  };
   const handleDeleteTodo = (index) => {
     const newTodos = todos.filter((_, i) => i !== index);
     setTodos(newTodos);
@@ -24,6 +30,18 @@ const TodoList = () => {
       setTodos(newTodos);
       setListInputs({ ...listInputs, [index]: "" });
     }
+  };
+
+  const handleListKeyDown = (event, index) => {
+    if (event.key === "Enter") {
+      handleAddList(index);
+    }
+  };
+
+  const handleDeleteList = (todoIndex, listIndex) => {
+    const newTodos = [...todos];
+    newTodos[todoIndex].lists.splice(listIndex, 1);
+    setTodos(newTodos);
   };
 
   const handleListInputChange = (index, value) => {
@@ -41,6 +59,7 @@ const TodoList = () => {
             placeholder="Enter heading"
             value={headingInput}
             onChange={(e) => setHeadingInput(e.target.value)}
+            onKeyDown={handleKeyDown}
           />
           <button className="add-list-button" onClick={handleAddTodo}>
             Add Heading
@@ -50,19 +69,25 @@ const TodoList = () => {
       <div className="todo_main">
         {todos.map((todo, index) => (
           <div key={index} className="todo-card">
-            <div className="heading-todo">
+            <div className="heading_todo">
               <h3>{todo.heading}</h3>
               <button
                 className="delete-button-heading"
                 onClick={() => handleDeleteTodo(index)}
               >
-                Delete Heading
+                Delete
               </button>
             </div>
             <ul>
               {todo.lists.map((list, listIndex) => (
                 <li key={listIndex} className="todo_inside_list">
-                  <p>{list}</p>
+                  <span>{list}</span>
+                  <button
+                    className="delete-button-list"
+                    onClick={() => handleDeleteList(index, listIndex)}
+                  >
+                    Delete
+                  </button>
                 </li>
               ))}
             </ul>
@@ -73,12 +98,13 @@ const TodoList = () => {
                 placeholder="Enter list item"
                 value={listInputs[index] || ""}
                 onChange={(e) => handleListInputChange(index, e.target.value)}
+                onKeyDown={(e) => handleListKeyDown(e, index)}
               />
               <button
                 className="add-list-button"
                 onClick={() => handleAddList(index)}
               >
-                Add List
+                Add Item
               </button>
             </div>
           </div>
